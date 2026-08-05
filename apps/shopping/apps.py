@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class ShoppingConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.shopping"
+    label = "shopping"
+
+    def ready(self):
+        import apps.shopping.signals  # noqa: F401
