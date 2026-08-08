@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.shopping",
     "apps.transactions",
     "apps.esp",
+    # "apps.demo",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +54,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -71,30 +72,13 @@ ASGI_APPLICATION = "config.asgi.application"
 
 AUTH_USER_MODEL = "users.User"
 
+# SQLite by default — no database host/user/password configuration required.
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-database_url = os.getenv("DATABASE_URL")
-if database_url and database_url.startswith("postgres"):
-    import re
-
-    match = re.match(
-        r"postgres(?:ql)?://(?P<user>[^:]+):(?P<password>[^@]+)@(?P<host>[^:]+):(?P<port>\d+)/(?P<name>.+)",
-        database_url,
-    )
-    if match:
-        DATABASES["default"] = {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": match.group("name"),
-            "USER": match.group("user"),
-            "PASSWORD": match.group("password"),
-            "HOST": match.group("host"),
-            "PORT": match.group("port"),
-        }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -146,7 +130,9 @@ SPECTACULAR_SETTINGS = {
 }
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-USE_INMEMORY_CHANNEL_LAYER = os.getenv("USE_INMEMORY_CHANNEL_LAYER", "False").lower() == "true"
+USE_INMEMORY_CHANNEL_LAYER = os.getenv(
+    "USE_INMEMORY_CHANNEL_LAYER", "True"
+).lower() == "true"
 
 if USE_INMEMORY_CHANNEL_LAYER:
     CHANNEL_LAYERS = {
